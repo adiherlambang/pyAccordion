@@ -8,7 +8,7 @@ current_date = datetime.now().strftime('%Y-%m-%d')
 
 def configure_logger(app):
     # Define log file path
-    log_file = 'app/logs/application.log'
+    log_file = './app/logs/application.log'
 
     # Check if the log file exists, and create it if it doesn't
     if not os.path.isfile(log_file):
