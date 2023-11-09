@@ -1,4 +1,4 @@
 venv/
 app/logs/
-app/xetc/
+app/xetc/*.json
 __pycache__/

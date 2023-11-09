@@ -24,14 +24,8 @@ class schedulerService:
     # task that runs at a fixed interval
     def send_email_task(self):
         # run forever
-        while True:
-            self.counter += 1
-            # perform the task
-            if self.counter <= 2:
-                self.app.logger.info(f"Task execution email services counter: #{self.counter}")
-                gmailServices.main(self.app,to="septian.adi@mastersystem.co.id",cc="kadek.sena@mastersystem.co.id",subject="testing email background service",message_text="testing email background service from python every day at 08.00")
-            else:
-                self.counter = 0
+        self.app.logger.info(f"Task execution email services counter: #{self.counter}")
+        gmailServices.main(self.app,to="septian.adi@mastersystem.co.id",cc="kadek.sena@mastersystem.co.id",subject="testing email background service",message_text="testing email background service from python every day at 08.00")
 
     def main(self):
         # create and start the daemon thread
