@@ -10,7 +10,10 @@ def configure_logger(app):
     # Define log file path
     log_file = './app/logs/application.log'
 
-    # Check if the log file exists, and create it if it doesn't
+    log_directory = os.path.dirname(log_file)
+    if not os.path.exists(log_directory):
+        os.makedirs(log_directory)
+
     if not os.path.isfile(log_file):
         open(log_file, 'w').close()
 
