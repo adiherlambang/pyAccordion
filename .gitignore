@@ -1,0 +1,4 @@
+venv/
+app/logs/
+app/xetc/
+__pycache__/

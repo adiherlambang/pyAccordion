@@ -1,0 +1,56 @@
+/* Customize pagination style */
+.pagination {
+    margin-left: 20rem; /* Adjust margin as needed */
+    padding: 10px; /* Adjust padding as needed */
+    text-align: right; /* Right-align the pagination */
+}
+
+.pagination li {
+    display: inline-block;
+    margin: 2px;
+    padding: 4px 8px;
+    border: 1px radius #6f6d6d; /* Add a border */
+    background-color: #f1eeee; /* Set background color */
+    color: #040404; /* Set text color */
+    transition: background-color 0.3s, color 0.3s; /* Add a transition effect for smoother color changes */
+}
+
+.pagination li:hover {
+    background-color: #5873fe; /* Background color on hover */
+    color: #e6e4e4; /* Text color on hover */
+}
+
+.pagination .active {
+    background-color: #5873fe; /* Active page background color */
+    color: #e8e5e5; /* Active page text color */
+}
+
+tr.selected {
+    background-color: #5873fe; /* Background color for selected rows */
+    color: #fff; /* Text color for selected rows */
+}
+
+#bootstrap-data-table-export tbody tr:hover {
+    background-color: #5ba1ec; /* Change the background color on hover */
+    cursor: pointer; /* Change the cursor to a pointer on hover */
+}
+
+#bootstrap-data-table-export thead th {
+    background-color: #5873fe; /* Set your desired background color */
+    color: #fff; /* Set the text color (e.g., white) for the header */
+}
+
+#bootstrap-data-table-export {
+    border-collapse: collapse; /* Collapse borders to avoid double borders */
+
+    /* Add border styles for the table, th, and td elements */
+    border: 1px solid #ccc; /* Add a border to the entire table */
+}
+
+#bootstrap-data-table-export th, #bootstrap-data-table-export td {
+    border: 1px solid #ccc; /* Add borders to header and data cells */
+}
+
+.nav.nav-tabs{
+    margin-bottom: 20px;
+}
