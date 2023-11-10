@@ -17,7 +17,7 @@ load_dotenv()
 service = schedulerService(app)
 service.main()
 
-app.logger.info(f"{app} pyAccordion is running")
+app.logger.info(f"{app} pyAccordion is running , DateTime: {datetime.now()}")
 
 @app.route('/<path:filename>')
 def serve_static(filename):
