@@ -87,16 +87,18 @@ class cisco_api:
                 'serialNumbers':value['items'],
                 'limit':900
             }
+            head = "MSI-SearchSerialNumber"
         elif value['selected']=='contractNumber':
             data={
                 'contractNumbers':value['items'],
                 'limit':999
             }
+            head = "MSI-SearchContractNumber"
         # print(data)
         headers={
             'Authorization': f'Bearer {os.environ.get("TOKEN")}',
             'Content-Type': 'application/json',  # Set the content type if necessary
-            'Request-Id':'MSI-ContractSummary'
+            'Request-Id':head
         }
 
         try:
@@ -128,7 +130,7 @@ class cisco_api:
         headers={
             'Authorization': f'Bearer {os.environ.get("TOKEN")}',
             'Content-Type': 'application/json',  # Set the content type if necessary
-            'Request-Id':'MSI-ContractSummary'
+            'Request-Id':'MSI-DashboardSummary'
         }
         
         try:
