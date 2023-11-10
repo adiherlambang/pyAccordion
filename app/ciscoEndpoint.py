@@ -40,7 +40,9 @@ class cisco_api:
             
         except (requests.exceptions.RequestException, ConnectionResetError) as e:
             app.logger.warning(f"Request failed: {e}")
-            raise e
+            self.responseData['status'] = response.status_code
+            self.responseData['data'] = response_json
+            return self.responseData
 
     def contractSummary(self,value):
 
@@ -73,6 +75,8 @@ class cisco_api:
                 return self.responseData
         except (requests.exceptions.RequestException, ConnectionResetError) as e:
             app.logger.warning(f"Request failed: {e}")
+            self.responseData['status'] = response.status_code
+            self.responseData['data'] = response_json
             return self.responseData
     
     def searchByItem(self,value):
@@ -111,6 +115,8 @@ class cisco_api:
                 return self.responseData
         except (requests.exceptions.RequestException, ConnectionResetError) as e:
             app.logger.warning(f"Request failed: {e}")
+            self.responseData['status'] = response.status_code
+            self.responseData['data'] = response_json
             return self.responseData
         
     def dashboard(self):
