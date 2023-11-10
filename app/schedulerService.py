@@ -3,7 +3,6 @@ from threading import Thread
 from app.mailService import gmailServices
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-import pytz
 
 class schedulerService:
 
@@ -14,7 +13,7 @@ class schedulerService:
 
     def background_task(self):
         # Schedule the task to run every day at 08:00 AM
-        trigger = CronTrigger(hour=10, minute=35,timezone=pytz.timezone('Asia/Jakarta'))
+        trigger = CronTrigger(hour=10, minute=42)
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
