@@ -46,7 +46,7 @@ class cisco_api:
 
         data = {
             'billToLocation': [value],
-            'limit':1000
+            'limit':999
         }
 
         headers={
@@ -57,7 +57,7 @@ class cisco_api:
 
         try:
             response = requests.post(os.getenv('CONTRACT_SUMMARY_URL'), json=data, headers=headers)
-            print(headers)
+            # print(headers)
             # Check the response
             if response.status_code == 200:
                 response_json = response.json()
@@ -76,11 +76,19 @@ class cisco_api:
             return self.responseData
     
     def searchByItem(self,value):
+       
 
-        data={
-            'serialNumbers':value
-        }
-
+        if value['selected']=='serialNumber':
+            data={
+                'serialNumbers':value['items'],
+                'limit':900
+            }
+        elif value['selected']=='contractNumber':
+            data={
+                'contractNumbers':value['items'],
+                'limit':999
+            }
+        # print(data)
         headers={
             'Authorization': f'Bearer {os.environ.get("TOKEN")}',
             'Content-Type': 'application/json',  # Set the content type if necessary
@@ -94,6 +102,38 @@ class cisco_api:
                 self.responseData['status'] = response.status_code
                 self.responseData['data'] = response_json
                 app.logger.info(f"POST request search by item with {data} was successful")
+                return self.responseData
+            else:
+                self.responseData['status'] = response.status_code
+                self.responseData['data'] = 'No Data'
+                app.logger.error(f"POST request failed with status code: {response.status_code} and {response.content}")
+                # print(self.responseData)
+                return self.responseData
+        except (requests.exceptions.RequestException, ConnectionResetError) as e:
+            app.logger.warning(f"Request failed: {e}")
+            return self.responseData
+        
+    def dashboard(self):
+        data = {
+            'billToLocation': [338983795],
+            'limit':999
+        }
+
+        headers={
+            'Authorization': f'Bearer {os.environ.get("TOKEN")}',
+            'Content-Type': 'application/json',  # Set the content type if necessary
+            'Request-Id':'MSI-ContractSummary'
+        }
+        
+        try:
+            response = requests.post(os.getenv('CONTRACT_SUMMARY_URL'), json=data, headers=headers)
+            # print(headers)
+            # Check the response
+            if response.status_code == 200:
+                response_json = response.json()
+                self.responseData['status'] = response.status_code
+                self.responseData['data'] = response_json
+                app.logger.info(f"POST request contact summary search with {data['billToLocation']} was successful")
                 return self.responseData
             else:
                 self.responseData['status'] = response.status_code

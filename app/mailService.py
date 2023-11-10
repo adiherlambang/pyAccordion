@@ -7,6 +7,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import base64
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 # from flask import current_app as app
 
 # If modifying these scopes, delete the file token.json.
@@ -16,7 +17,8 @@ class gmailServices:
 
     @staticmethod
     def create_message(sender, to, subject, message_text,cc=None, bcc=None):
-        message = MIMEText(message_text)
+        message = MIMEMultipart()
+        
         message['to'] = to
         message['from'] = sender
         message['subject'] = subject
@@ -26,6 +28,12 @@ class gmailServices:
 
         if bcc:
             message['bcc'] = bcc  # Add BCC addresses
+        
+        # text_part = MIMEText(message_text, 'plain')
+        # message.attach(text_part)
+        
+        html_part = MIMEText(f'<html><body><p>{message_text}</p></body></html>', 'html')
+        message.attach(html_part)
 
         raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode("utf-8")
         return {'raw': raw_message}

@@ -122,21 +122,24 @@
                                                     <input id="billToID" class="form-control input-rounded" type="text" value="338983795 [PT MASTERSYSTEM INFOTAMA]" readonly="">
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group">
-                                                    <label>Search by...</label>
-                                                    <input id="items" type="text" class="form-control input-rounded" style="margin-top:15px;" placeholder="Input Serial Number">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- <div class="row">
-                                            <div class="col-lg-4">
-                                                <div class="form-group">
-                                                    <label>Serial Numbers</label>
-                                                    <input type="text" class="form-control input-rounded" placeholder="Input Serial Number">
-                                                </div>
-                                            </div>
-                                        </div> -->
+                                            <div class="col-lg-8">
+                                              <div class="form-group">
+                                                  <label>Search by...</label>
+                                                  <div class="row">
+                                                      <div class="col-sm-4" style="margin-top:10px;">
+                                                          <select id="selectItems" class="form-control input-rounded">
+                                                              <option id="serialNumber" autocomplete="off">Serial Numbers</option>
+                                                              <option id="contractNumber" autocomplete="off">Contract Numbers</option>
+                                                          </select>
+                                                      </div>
+                                                      <div class="col-sm-4" style="margin-top:10px;">
+                                                          <input id="id-SerialNumber" type="text" class="form-control input-rounded items-SerialNumber" placeholder="Input Serial Number" autocomplete="off">
+                                                          <input id="id-ContractNumber" type="text" class="form-control input-rounded items-ContractNumber" placeholder="Input Contract Number" autocomplete="off">
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                        </div>                         
                                         <button id="itemSearch" type="submit" class="btn btn-primary"><i class="ti-search"></i> Search</button> 
                                     </div>
                                 </div>
@@ -157,8 +160,7 @@
                                     <div class="tab-pane active" id="table" role="tabpanel">
                                         <div class="bootstrap-data-table-panel">
                                             <div class="table-responsive">
-                                                <table id="bootstrap-data-table-export" class="table table-striped table-bordered table-hover">
-                                                    <div id="loading_spinner"></div>
+                                                <table id="bootstrap-data-table-export" class="table table-striped table-bordered table-hover">                                               
                                                     <thead>
                                                         <tr>
                                                             <th>No</th>
@@ -171,7 +173,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <!-- Content body table -->
+                                                        
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -210,7 +212,7 @@
                                               <div class="col-lg-4">
                                                 <div class="form-group">
                                                   <label>Contract Number:</label>
-                                                  <input id="contractNumber" class="form-control input-rounded" type="text" value="......" readonly="">
+                                                  <input id="detailsContractNumber" class="form-control input-rounded" type="text" value="......" readonly="">
                                                 </div>
                                               </div>
                                               <div class="col-lg-4">
@@ -295,7 +297,7 @@
                                               <div class="col-lg-4">
                                                 <div class="form-group">
                                                   <label>Serial Number:</label>
-                                                  <input id="serialNumber" class="form-control input-rounded" type="text" value="......" readonly="">
+                                                  <input id="detailsSerialNumber" class="form-control input-rounded" type="text" value="......" readonly="">
                                                 </div>
                                               </div>
                                               <div class="col-lg-4">

@@ -13,7 +13,7 @@ class schedulerService:
 
     def background_task(self):
         # Schedule the task to run every day at 08:00 AM
-        trigger = CronTrigger(hour=10, minute=45)
+        trigger = CronTrigger(hour=8, minute=0)
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
@@ -26,7 +26,11 @@ class schedulerService:
         # run forever
         if self.counter <1:
             self.app.logger.info(f"Task execution email services counter: #{self.counter}")
-            gmailServices.main(self.app,to="septian.adi@mastersystem.co.id",cc="kadek.sena@mastersystem.co.id",subject="testing email background service",message_text="testing email background service from python every day at 08.00")
+            gmailServices.main(self.app,
+                               to="septian.adi@mastersystem.co.id",
+                               cc="kadek.sena@mastersystem.co.id",
+                               subject="AUTOMATIC EMAIL from python APPS",
+                               message_text="testing email background service from python every day at 08.00")
             self.counter+=1
 
     def main(self):

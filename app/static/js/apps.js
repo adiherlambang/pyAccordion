@@ -1,12 +1,32 @@
 $(document).ready(function() {
     var textarea = $('#customerAddress');
     // textarea.height(textarea[0].scrollHeight - textarea.outerHeight() + textarea.height());
-  
+    defaultSelectedOption()
+
     textarea.on('input', function() {
       this.style.height = 'auto';
       this.style.height = (this.scrollHeight) + 'px';
     });
+
+    $('#selectItems').change(function () {
+        var selectedValue = $('option:selected', this).attr('id');
+        console.log(selectedValue); // You can use the selectedValue as needed
+        if (selectedValue === "contractNumber") {
+            $(".items-ContractNumber").show();
+            $(".items-SerialNumber").hide();
+        } else if (selectedValue === "serialNumber") {
+            $(".items-SerialNumber").show();
+            $(".items-ContractNumber").hide();
+        }
+        
+    });
+
+    $('#selectItems').trigger('change');
 });
+
+function defaultSelectedOption(){
+    $(".items-ContractNumber").hide();
+}
 
 $('#contractSummary').on('click', function(event) {
     event.preventDefault();
@@ -95,12 +115,25 @@ $('#contractSummary').on('click', function(event) {
 });
 
 $('#itemSearch').on('click', function(event){
+    let items
     event.preventDefault();
     console.info("Getting data ---- Item Search")
 
-    const getValue = $("#items").val()
-    let items = getValue.split(",")
+    getSelected = $('option:selected', "#selectItems").attr('id');
 
+    if(getSelected=="serialNumber"){
+        const getValue = $("#id-SerialNumber").val()
+        items = getValue.split(",")
+    }else if(getSelected=="contractNumber"){
+        const getValue = $("#id-ContractNumber").val()
+        items = getValue.split(",")
+    }
+
+    let reqData = {
+        "selected":getSelected,
+        "items": items
+    }
+    console.info(reqData)
     table = $('#bootstrap-data-table-export').DataTable();
     table.destroy();
 
@@ -109,11 +142,11 @@ $('#itemSearch').on('click', function(event){
 
     $.ajax({
         url: 'SearchByItem',
-        data:JSON.stringify(items),
+        data:JSON.stringify(reqData),
         type:'POST',
         contentType: 'application/json',
         beforeSend: function () {
-            $('#bootstrap-data-table-export loading_spinner').html('<div id="spinner" class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</div>');
+            $('#bootstrap-data-table-export tbody').html('<div id="spinner" class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</div>');
         },
         success: function (resData) {
             $('#bootstrap-data-table-export').DataTable({
@@ -124,7 +157,7 @@ $('#itemSearch').on('click', function(event){
                 autoWidth: true,
                 columns: [
                     {data:'count'},
-                    {data:'contractNumber'},
+                    {data:'contractNumbers'},
                     {data:'customerName'},
                     {data:'product'},
                     {data:'productGroup'},
@@ -135,7 +168,7 @@ $('#itemSearch').on('click', function(event){
                 initComplete: function () {
                     // This function will be called once the DataTable is fully initialized.
                     console.log('DataTable initialization is complete.');
-                    $('#bootstrap-data-table-export loading_spinner spinner').html('');
+                    $('#bootstrap-data-table-export tbody spinner').html('');
                 }
             });
 
@@ -149,6 +182,7 @@ $('#itemSearch').on('click', function(event){
                     // Do something with the row ID (e.g., display it)
                     console.info('Click on row: ' + rowId);                   
                     focusDetailsTab();
+                    defaultDetailsTab();
                     setDetailsTab(resData,rowId)
 
                     // Set the flag to prevent further clicks
@@ -160,6 +194,9 @@ $('#itemSearch').on('click', function(event){
                     }, 1500);
                 }
             });
+        },
+        error: function () {
+            $('#bootstrap-data-table-export tbody').html('<div class="text-center text-danger">Error loading data</div>');
         }
     })
 
@@ -212,39 +249,62 @@ function focusDetailsTab(){
 }
 
 function setDetailsTab(data,row){
-    console.log(row)
-    $('#customerID').val(data[row]['customerID'])
-    $('#customerName').val(data[row]['customerName'])
-    $('#customerAddress').val(data[row]['customerAddress'])
-    $('#contractNumber').val(data[row]['contractNumber'])
-    $('#serviceSKU').val(data[row]['serviceSKU'])
-    $('#billTo').val(data[row]['billTo'])
-    $('#salesOrder').val(data[row]['salesOrder'])
-    $('#purchaseOrder').val(data[row]['purchaseOrder'])
-    $('#MsalesOrder').val(data[row]['MsalesOrder'])
-    $('#MpurchaseOrder').val(data[row]['MpurchaseOrder'])
+    // console.log(data[row]['contractNumbers'])
+    $('#customerID').val(data[row]['customerID']);
+    $('#customerName').val(data[row]['customerName']);
+    $('#customerAddress').val(data[row]['customerAddress']);
+    $('#detailsContractNumber').val(data[row]['contractNumbers']);
+    $('#serviceSKU').val(data[row]['serviceSKU']);
+    $('#billTo').val(data[row]['billTo']);
+    $('#salesOrder').val(data[row]['salesOrder']);
+    $('#purchaseOrder').val(data[row]['purchaseOrder']);
+    $('#MsalesOrder').val(data[row]['MsalesOrder']);
+    $('#MpurchaseOrder').val(data[row]['MpurchaseOrder']);
 
-    startDateContractFormated =data[row]['startDateContract'].split("T")
-    $('#startDateContract').val(startDateContractFormated[0])
+    startDateContractFormated =data[row]['startDateContract'].split("T");
+    $('#startDateContract').val(startDateContractFormated[0]);
 
-    endtDateContractFormated =data[row]['endDateContract'].split("T")
-    $('#endDateContract').val(endtDateContractFormated[0])
+    endtDateContractFormated =data[row]['endDateContract'].split("T");
+    $('#endDateContract').val(endtDateContractFormated[0]);
 
-    dateFormat = data[row]['ldod'].split("T")
-    $('#ldod').val(dateFormat[0])
+    dateFormat = data[row]['ldod'].split("T");
+    $('#ldod').val(dateFormat[0]);
 
-    $('#contractStatus').val(data[row]['contractStatus'])
-    $('#productName').val(data[row]['product'])
+    $('#contractStatus').val(data[row]['contractStatus']);
+    $('#productName').val(data[row]['product']);
 
-    editedDescription = data[row]['description']
-    $('#productDescription').val(editedDescription.replace(/\^\^/g, ''))
+    editedDescription = data[row]['description'];
+    $('#productDescription').val(editedDescription.replace(/\^\^/g, ''));
 
-    $('#group').val(data[row]['productGroup'])
-    $('#serialNumber').val(data[row]['serialNumber'])
+    $('#group').val(data[row]['productGroup']);
+    $('#detailsSerialNumber').val(data[row]['serialNumber']);
     
-    $('#warrantyType').val(data[row]['warrantyType'])
-    $('#warrantyStatus').val(data[row]['warrantyStatus'])
+    $('#warrantyType').val(data[row]['warrantyType']);
+    $('#warrantyStatus').val(data[row]['warrantyStatus']);
 
-    dateWarrantyFormated = data[row]['warrantyEndDate'].split("T")
-    $('#warrantyEndDate').val(dateWarrantyFormated[0])
+    dateWarrantyFormated = data[row]['warrantyEndDate'].split("T");
+    $('#warrantyEndDate').val(dateWarrantyFormated[0]);
+}
+
+function defaultDetailsTab(){
+    $('#customerID').val("");
+    $('#customerName').val("");
+    $('#customerAddress').val("");
+    $('#detailsContractNumber').val("");
+    $('#serviceSKU').val("");
+    $('#billTo').val("");
+    $('#salesOrder').val("");
+    $('#purchaseOrder').val("");
+    $('#MsalesOrder').val("");
+    $('#MpurchaseOrder').val("");
+    $('#startDateContract').val("");
+    $('#endDateContract').val("");
+    $('#ldod').val("");
+    $('#contractStatus').val("");
+    $('#productName').val("");
+    $('#productDescription').val("");
+    $('#group').val("");
+    $('#detailsSerialNumber').val("");
+    $('#warrantyType').val("");
+    $('#warrantyEndDate').val("");
 }
