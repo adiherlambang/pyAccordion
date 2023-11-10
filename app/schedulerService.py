@@ -14,7 +14,7 @@ class schedulerService:
 
     def background_task(self):
         # Schedule the task to run every day at 08:00 AM
-        trigger = CronTrigger(hour=10, minute=10,timezone=pytz.timezone('Asia/Jakarta'))
+        trigger = CronTrigger(hour=10, minute=13,timezone=pytz.timezone('Asia/Jakarta'))
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
