@@ -183,8 +183,8 @@ def editItemSearchData(resData):
 
     return modifiedData
 
-@bp.route('/dashboard', methods=['GET'])
-def dashboard():
+@bp.route('/Dashboard', methods=['GET'])
+def dashboardService():
     retry_counter = 0
     if request.method == 'GET':
         while True:

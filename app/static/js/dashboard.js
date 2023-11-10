@@ -27,7 +27,7 @@ $(document).ready(function() {
     console.info("Getting data ---- All Contract")
 
     $.ajax({
-        url: 'dashboard', 
+        url: 'Dashboard', 
         type:'GET',
         contentType: 'application/json',
         beforeSend: function () {
