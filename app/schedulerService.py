@@ -3,6 +3,7 @@ from threading import Thread
 from app.mailService import gmailServices
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+import pytz
 
 class schedulerService:
 
@@ -13,7 +14,7 @@ class schedulerService:
 
     def background_task(self):
         # Schedule the task to run every day at 08:00 AM
-        trigger = CronTrigger(hour=8, minute=0)
+        trigger = CronTrigger(hour=10, minute=10,timezone=pytz.timezone('Asia/Jakarta'))
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
@@ -24,8 +25,10 @@ class schedulerService:
     # task that runs at a fixed interval
     def send_email_task(self):
         # run forever
-        self.app.logger.info(f"Task execution email services counter: #{self.counter}")
-        gmailServices.main(self.app,to="septian.adi@mastersystem.co.id",cc="kadek.sena@mastersystem.co.id",subject="testing email background service",message_text="testing email background service from python every day at 08.00")
+        if self.counter <1:
+            self.app.logger.info(f"Task execution email services counter: #{self.counter}")
+            gmailServices.main(self.app,to="septian.adi@mastersystem.co.id",cc="kadek.sena@mastersystem.co.id",subject="testing email background service",message_text="testing email background service from python every day at 08.00")
+            self.counter+=1
 
     def main(self):
         # create and start the daemon thread
@@ -33,5 +36,6 @@ class schedulerService:
             self.app.logger.info('Starting background task email services...')          
             daemon = Thread(target=self.background_task, daemon=True, name='Background')
             daemon.start()
+            # sleep(60)
         except Exception as error:
             self.app.logger.info(error)
