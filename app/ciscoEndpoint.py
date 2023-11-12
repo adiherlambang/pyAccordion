@@ -5,7 +5,8 @@ import os
 
 class cisco_api:
 
-    def __init__(self):
+    def __init__(self,parentApp):
+        self.app = parentApp
         self.clientID = os.environ.get('ccwr_client_id')
         self.clientSecret = os.environ.get('ccwr_client_secret')
         self.responseData = {

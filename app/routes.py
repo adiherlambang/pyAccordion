@@ -6,7 +6,7 @@ from .dashboardService import dashboard
 import time 
 
 bp = Blueprint('main', __name__)
-ccwrAPI = cisco_api()
+ccwrAPI = cisco_api(app)
 dataDashboard = dashboard()
 noData = []
 
