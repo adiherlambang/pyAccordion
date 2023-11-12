@@ -54,7 +54,7 @@ class schedulerService:
             
     def background_task(self):
         # Schedule the task to run every day at 08:00 AM
-        trigger = CronTrigger(hour=4, minute=22)
+        trigger = CronTrigger(hour=4, minute=25)
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
@@ -65,7 +65,7 @@ class schedulerService:
     # task that runs at a fixed interval
     def send_email_task(self):
         
-        data_array = json.loads(schedulerService.getData())
+        data_array = json.loads(self.getData())
         
         table_rows = ""
         for record in data_array:
