@@ -54,7 +54,7 @@ class schedulerService:
             
     def background_task(self):
         # Schedule the task to run every day at 08:00 AM
-        trigger = CronTrigger(hour=4, minute=19)
+        trigger = CronTrigger(hour=4, minute=22)
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
