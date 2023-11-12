@@ -41,8 +41,9 @@ class gmailServices:
     @staticmethod
     def send_email(app, service, user_id, message):
         try:
-            message = service.users().messages().send(userId=user_id, body=message).execute()
-            app.logger.info(f"Message sent: {message['id']}")
+            sent_message = service.users().messages().send(userId=user_id, body=message).execute()
+            service.users().messages().modify(userId=user_id, id=sent_message['id'], body={'addLabelIds': ['SENT']}).execute()
+            app.logger.info(f"Message sent: {sent_message['id']}")
             return message
         except Exception as e:
             app.logger.info(f"An error occurred: {e}")

@@ -1,8 +1,8 @@
 /* Customize pagination style */
 .pagination {
-    margin-left: 20rem; /* Adjust margin as needed */
+    margin-left: 10%; /* Adjust margin as needed */
     padding: 10px; /* Adjust padding as needed */
-    text-align: right; /* Right-align the pagination */
+    text-align: center; /* Right-align the pagination */
 }
 
 .pagination li {
@@ -50,6 +50,12 @@ tr.selected {
 #bootstrap-data-table-export th, #bootstrap-data-table-export td {
     border: 1px solid #ccc; /* Add borders to header and data cells */
 }
+
+#bootstrap-data-table-6month tbody tr:hover {
+    background-color: #5ba1ec; /* Change the background color on hover */
+    cursor: pointer; /* Change the cursor to a pointer on hover */
+}
+
 
 .nav.nav-tabs{
     margin-bottom: 20px;

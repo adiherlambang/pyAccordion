@@ -5,21 +5,31 @@
     /*  Data Table
     -------------*/
 
- 	$('#bootstrap-data-table').DataTable();
-
-
-    // $('#bootstrap-data-table').DataTable({
-    //     lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
-    // });
-
-	// $('#bootstrap-data-table-export').DataTable({
-    //     paging: true,
-    //     pageLength: 10 // Show 10 records per page
-    // });
+ 	// $('#bootstrap-data-table').DataTable();
 
     $('#bootstrap-data-table-export').DataTable({
         dom: 'lBfrtip',
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
         buttons: []
     });
+
+    // $('#bootstrap-data-table-6month').DataTable();
+    $('#bootstrap-data-table-6month').DataTable({
+        dom: 'lBfrtip',
+        lengthMenu: [[5, 10], [5, 10]],
+        buttons: []
+    })
+
+    $('#bootstrap-data-table-between1y6m').DataTable({
+        dom: 'lBfrtip',
+        lengthMenu: [[5, 10], [5, 10]],
+        buttons: []
+    })
+
+    $('#bootstrap-data-table-more1y').DataTable({
+        dom: 'lBfrtip',
+        lengthMenu: [[5, 10], [5, 10]],
+        buttons: []
+    })
+
 })(jQuery);

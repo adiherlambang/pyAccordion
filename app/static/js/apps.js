@@ -56,7 +56,7 @@ $('#contractSummary').on('click', function(event) {
                 data: resData,
                 autoWidth: true,
                 columns: [
-                    {data:'count'},
+                    { data:'count'},
                     { data: 'id' },
                     { data: 'name' },
                     { data: 'contractNumber' },
@@ -110,6 +110,20 @@ $('#contractSummary').on('click', function(event) {
                     }, 1500);
                 }
             });
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            console.error('Error:', status, error);
+    
+            // Check if it's a network-related error
+            if (status === 'error' && xhr.status === 0) {
+                console.error('Network error: The request was aborted or the network connection was lost.');
+                // Implement retry logic or show an appropriate message to the user.
+            }
+        },
+        complete: function () {
+            // This callback will be called regardless of success or failure
+            console.info("Request Complete ---- Contract Summary");
         }   
     });
 });
@@ -195,8 +209,19 @@ $('#itemSearch').on('click', function(event){
                 }
             });
         },
-        error: function () {
-            $('#bootstrap-data-table-export tbody').html('<div class="text-center text-danger">Error loading data</div>');
+        error: function (xhr, status, error) {
+            // Handle error response
+            console.error('Error:', status, error);
+    
+            // Check if it's a network-related error
+            if (status === 'error' && xhr.status === 0) {
+                console.error('Network error: The request was aborted or the network connection was lost.');
+                // Implement retry logic or show an appropriate message to the user.
+            }
+        },
+        complete: function () {
+            // This callback will be called regardless of success or failure
+            console.info("Request Complete --- Item Search");
         }
     })
 
@@ -228,6 +253,20 @@ $('#sendEmail').on('click', function(event){
                 $('#composeEmail').modal('toggle');
             });
             console.log(resData)
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            console.error('Error:', status, error);
+    
+            // Check if it's a network-related error
+            if (status === 'error' && xhr.status === 0) {
+                console.error('Network error: The request was aborted or the network connection was lost.');
+                // Implement retry logic or show an appropriate message to the user.
+            }
+        },
+        complete: function () {
+            // This callback will be called regardless of success or failure
+            console.info("Request Complete ---- Sent Email");
         }
     });
 });
