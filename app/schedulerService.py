@@ -29,32 +29,32 @@ class schedulerService:
             
             elif status_code == 401 or status_code == 403:
                 if retry_counter < 2:
-                    self.app.logger.error(f"Error {status_code}")
-                    self.app.logger.info(f"{retry_counter} time, retrying for 5 seconds....")
+                    # self.app.logger.error(f"Error {status_code}")
+                    # self.app.logger.info(f"{retry_counter} time, retrying for 5 seconds....")
                     sleep(5)
                     ccwrAPI.getToken()
                     retry_counter += 1
                 else:
-                    self.app.logger.error("Maximum retries reached.")
+                    # self.app.logger.error("Maximum retries reached.")
                     return jsonify(noData)
             
             elif status_code == 500:
                 if retry_counter < 2:
-                    self.app.logger.error(f"Error {status_code}")
-                    self.app.logger.info(f"{retry_counter} time, retrying for 5 seconds....")
+                    # self.app.logger.error(f"Error {status_code}")
+                    # self.app.logger.info(f"{retry_counter} time, retrying for 5 seconds....")
                     self.time.sleep(5)  # Wait for 5 seconds before retrying the request
                     retry_counter += 1
                 else:
-                    self.app.logger.error("Maximum retries reached.")
+                    # self.app.logger.error("Maximum retries reached.")
                     return jsonify(noData)
 
             else:
-                self.app.logger.error(f"Unknown Error {status_code}")
+                # self.app.logger.error(f"Unknown Error {status_code}")
                 return jsonify(noData)
             
     def background_task(self):
         # Schedule the task to run every day at 08:00 AM
-        trigger = CronTrigger(hour=4, minute=25)
+        trigger = CronTrigger(hour=4, minute=30)
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
