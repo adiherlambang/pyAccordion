@@ -6,6 +6,7 @@ from apscheduler.triggers.cron import CronTrigger
 from .dashboardService import dashboard
 from .ciscoEndpoint import cisco_api
 from flask import jsonify,json
+from flask import current_app as app
 
 class schedulerService:
 
@@ -16,7 +17,7 @@ class schedulerService:
 
     def getData(self):
         noData=[]
-        ccwrAPI = cisco_api()
+        ccwrAPI = cisco_api(app)
         dataDashboard = dashboard()
         while True:
             self.app.logger.info("Request Contact Summary for email initiate")
@@ -54,7 +55,7 @@ class schedulerService:
             
     def background_task(self):
         # Schedule the task to run every day at 08:00 AM
-        trigger = CronTrigger(hour=4, minute=35)
+        trigger = CronTrigger(hour=4, minute=37)
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
