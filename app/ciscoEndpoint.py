@@ -30,17 +30,17 @@ class cisco_api:
             if response.status_code == 200:
                 response_json = response.json()
                 self.responseData['status'] = response.status_code
-                app.logger.info('POST request getToken was successful')
+                self.app.logger.info('POST request getToken was successful')
                 os.environ['TOKEN'] = response_json['access_token']
                 # print(os.environ.get('TOKEN'))
                 return self.responseData
             else:
                 self.responseData['status'] = response.status_code
-                app.logger.error(f"POST request failed with status code: {response.status_code} and {response.content}")
+                self.app.logger.error(f"POST request failed with status code: {response.status_code} and {response.content}")
                 return self.responseData
             
         except (requests.exceptions.RequestException, ConnectionResetError) as e:
-            app.logger.warning(f"Request failed: {e}")
+            self.app.logger.warning(f"Request failed: {e}")
             # self.responseData['status'] = response.status_code
             # self.responseData['data'] = response_json
             return self.responseData
@@ -66,16 +66,16 @@ class cisco_api:
                 response_json = response.json()
                 self.responseData['status'] = response.status_code
                 self.responseData['data'] = response_json
-                app.logger.info(f"POST request contact summary search with {data['billToLocation']} was successful")
+                self.app.logger.info(f"POST request contact summary search with {data['billToLocation']} was successful")
                 return self.responseData
             else:
                 self.responseData['status'] = response.status_code
                 self.responseData['data'] = 'No Data'
-                app.logger.error(f"POST request failed with status code: {response.status_code} and {response.content}")
+                self.app.logger.error(f"POST request failed with status code: {response.status_code} and {response.content}")
                 # print(self.responseData)
                 return self.responseData
         except (requests.exceptions.RequestException, ConnectionResetError) as e:
-            app.logger.warning(f"Request failed: {e}")
+            self.app.logger.warning(f"Request failed: {e}")
             # self.responseData['status'] = response.status_code
             # self.responseData['data'] = response_json
             return self.responseData
@@ -108,16 +108,16 @@ class cisco_api:
                 response_json = response.json()
                 self.responseData['status'] = response.status_code
                 self.responseData['data'] = response_json
-                app.logger.info(f"POST request search by item with {data} was successful")
+                self.app.logger.info(f"POST request search by item with {data} was successful")
                 return self.responseData
             else:
                 self.responseData['status'] = response.status_code
                 self.responseData['data'] = 'No Data'
-                app.logger.error(f"POST request failed with status code: {response.status_code} and {response.content}")
+                self.app.logger.error(f"POST request failed with status code: {response.status_code} and {response.content}")
                 # print(self.responseData)
                 return self.responseData
         except (requests.exceptions.RequestException, ConnectionResetError) as e:
-            app.logger.warning(f"Request failed: {e}")
+            self.app.logger.warning(f"Request failed: {e}")
             # self.responseData['status'] = response.status_code
             # self.responseData['data'] = response_json
             return self.responseData
@@ -142,14 +142,14 @@ class cisco_api:
                 response_json = response.json()
                 self.responseData['status'] = response.status_code
                 self.responseData['data'] = response_json
-                app.logger.info(f"POST request contact summary search with {data['billToLocation']} was successful")
+                self.app.logger.info(f"POST request contact summary search with {data['billToLocation']} was successful")
                 return self.responseData
             else:
                 self.responseData['status'] = response.status_code
                 self.responseData['data'] = 'No Data'
-                app.logger.error(f"POST request failed with status code: {response.status_code} and {response.content}")
+                self.app.logger.error(f"POST request failed with status code: {response.status_code} and {response.content}")
                 # print(self.responseData)
                 return self.responseData
         except (requests.exceptions.RequestException, ConnectionResetError) as e:
-            app.logger.warning(f"Request failed: {e}")
+            self.app.logger.warning(f"Request failed: {e}")
             return self.responseData

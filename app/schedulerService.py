@@ -5,8 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from .dashboardService import dashboard
 from .ciscoEndpoint import cisco_api
-from flask import jsonify,json
-from flask import current_app as app
+from flask import jsonify,json,current_app as app
 
 class schedulerService:
 
@@ -55,7 +54,7 @@ class schedulerService:
             
     def background_task(self):
         # Schedule the task to run every day at 08:00 AM
-        trigger = CronTrigger(hour=4, minute=37)
+        trigger = CronTrigger(hour=4, minute=45)
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
