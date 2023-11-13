@@ -3,115 +3,164 @@ from threading import Thread
 from app.mailService import gmailServices
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from .dashboardService import dashboard
 from .ciscoEndpoint import cisco_api
-from flask import jsonify,json,current_app as app
+from flask import jsonify
+from .dashboardService import dashboard
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle,Paragraph,Spacer
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from io import BytesIO
 
-class schedulerService:
+NO_DATA = []
 
-    def __init__(self,parentApp):
-      self.app = parentApp
-      self.scheduler = BackgroundScheduler()
-      self.counter = 0
+class SchedulerService:
 
-    def getData(self):
-        noData=[]
-        ccwrAPI = cisco_api(app)
-        dataDashboard = dashboard()
-        while True:
-            self.app.logger.info("Request Contact Summary for email initiate")
-            resData = ccwrAPI.dashboard()
-            status_code = resData.get('status')
-            
+    def __init__(self, parent_app):
+        self.app = parent_app
+        self.scheduler = BackgroundScheduler()
+        self.counter = 0
+        self.retry_limit = 2
+        self.retry_sleep_time = 5
+
+    def get_data(self):
+        cisco_api_instance = cisco_api(self.app)
+        data_dashboard = dashboard(self.app)
+        retry_counter = 0
+
+        while retry_counter < self.retry_limit:
+            req_data = cisco_api_instance.dashboard()
+            status_code = req_data.get('status')
+
             if status_code == 200:
-                getDataContract = dataDashboard.main(resData)
-                return jsonify(getDataContract)
-            
-            elif status_code == 401 or status_code == 403:
-                if retry_counter < 2:
-                    # self.app.logger.error(f"Error {status_code}")
-                    # self.app.logger.info(f"{retry_counter} time, retrying for 5 seconds....")
-                    sleep(5)
-                    ccwrAPI.getToken()
-                    retry_counter += 1
-                else:
-                    # self.app.logger.error("Maximum retries reached.")
-                    return jsonify(noData)
-            
-            elif status_code == 500:
-                if retry_counter < 2:
-                    # self.app.logger.error(f"Error {status_code}")
-                    # self.app.logger.info(f"{retry_counter} time, retrying for 5 seconds....")
-                    self.time.sleep(5)  # Wait for 5 seconds before retrying the request
-                    retry_counter += 1
-                else:
-                    # self.app.logger.error("Maximum retries reached.")
-                    return jsonify(noData)
+                value_dashboard = data_dashboard.main(req_data)
+                return value_dashboard
+
+            elif status_code in {401, 403, 500}:
+                self.app.logger.error(f"Error {status_code}")
+                self.app.logger.info(f"{retry_counter + 1} time, retrying for {self.retry_sleep_time} seconds....")
+                sleep(self.retry_sleep_time)
+                cisco_api_instance.getToken()
+                retry_counter += 1
 
             else:
-                # self.app.logger.error(f"Unknown Error {status_code}")
-                return jsonify(noData)
-            
+                self.app.logger.error(f"Unknown Error {status_code}")
+                return jsonify(NO_DATA)
+
+        self.app.logger.error("Maximum retries reached.")
+        return jsonify(NO_DATA)
+
     def background_task(self):
-        # Schedule the task to run every day at 08:00 AM
-        trigger = CronTrigger(hour=4, minute=45)
+        trigger = CronTrigger(hour=8, minute=0)
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
             id='daily_email_task'
         )
         self.scheduler.start()
+    
+    def generate_pdf(self,data_dict,output_file_path):
+        buffer = BytesIO()
+        pdf = SimpleDocTemplate(buffer, pagesize=letter)
+        
+        element=[]
+        # Add content to the PDF
+        content = []
+        styles = getSampleStyleSheet()
+        header_content1 = f"pyAccordion Apps"
+        paragraph1 = Paragraph(header_content1,styles['Heading1'])
+        element.append(paragraph1)
+        header_content2 = f"You have {len(data_dict['6MonthfromNow'])} contracts expiring in less than 6 months"
+        paragraph2 = Paragraph(header_content2,styles['Normal'])
+        element.append(paragraph2)
 
-    # task that runs at a fixed interval
+        element.append(Spacer(1, 12))
+        
+        # Set up table headers
+        table_headers = ["No","Contract Number", "Day Left", "Contract End Date"]
+        content.append(table_headers)
+
+        key_dict = ["contractNumber", "dayLeft", "contractEndDate"]
+        # Add table rows
+        # self.app.logger.info(data_dict['6MonthfromNow'])
+        for idx, record in enumerate(data_dict['6MonthfromNow'], start=1):
+            if isinstance(record, dict):
+                row_data = [idx]
+                for key in key_dict:
+                    if key == "contractEndDate":
+                        date_part = record.get(key, '').split("T")[0]
+                        row_data.append(date_part)
+                    else:
+                        row_data.append(record.get(key, ''))
+                content.append(row_data)
+                # self.app.logger.info(f"Row data: {row_data}")
+            else:
+                self.app.logger.warning(f"Unexpected data format: {record}")
+
+        # Create the table
+        table = Table(content)
+        style = TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ])
+        table.setStyle(style)
+        element.append(table)
+        # Build the PDF
+        pdf.build(element)
+        # Write the contents of the buffer to a file
+        
+        with open(output_file_path, 'wb') as output_file:            
+            output_file.write(buffer.getvalue())
+        buffer.seek(0)
+        
+        return buffer
+
     def send_email_task(self):
+        self.app.logger.info(f"Preparing to send data")
+        data_dict = self.get_data()
         
-        data_array = json.loads(self.getData())
+        if not data_dict:
+            self.app.logger.warning("No data to send in email.")
+            return
         
-        table_rows = ""
-        for record in data_array:
-            table_rows += f"""
-                <tr>
-                    <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">{record.get('contractNumber', '')}</td>
-                    <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">{record.get('dayLeft', '')}</td>
-                    <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">{record.get('contractEndDate', '')}</td>
-                </tr>
-            """
-            
+        output_file_path = './app/out/contract_info.pdf'
+        pdf_buffer = self.generate_pdf(data_dict, output_file_path)
+        
         email_body = f"""
         <html>
         <body>
-            <h2>Your Table in an Email</h2>
-            <table border="1" style="border-collapse: collapse; width: 100%;">
-                <thead>
-                    <tr>
-                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Contract Number</th>
-                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Day Left</th>
-                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Contract End Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {table_rows}
-                </tbody>
-            </table>
+            <h4>### Please do not, reply this message ###</h4>
+            <p>You have {len(data_dict['6MonthfromNow'])} contract had to expired less then 6 month</p>
+            <p>Please found details in the attachment</p>
+            <br>
+            <p>Best Regards,</p>
+            <p>pyAccordion Application</p>
+            <h4>### Please do not, reply this message ###</h4>
         </body>
         </html>
         """
-        # run forever
-        if self.counter <1:
+
+        if self.counter < 1:
             self.app.logger.info(f"Task execution email services counter: #{self.counter}")
-            gmailServices.main(self.app,
-                               to="septian.adi@mastersystem.co.id",
-                               cc="kadek.sena@mastersystem.co.id",
-                               subject="AUTOMATIC EMAIL",
-                               message_text=email_body)
-            self.counter+=1
+            gmailServices.send_email_with_attachment(
+                app=self.app,
+                to="septian.adi@mastersystem.co.id",
+                # cc="kadek.sena@mastersystem.co.id",
+                subject="AUTOMATIC EMAIL - pyAccordion",
+                attachment_data=pdf_buffer,
+                attachment_filename=output_file_path,
+                message_text=email_body
+            )
+            self.counter += 1
 
     def main(self):
-        # create and start the daemon thread
         try:
-            self.app.logger.info('Starting background task email services...')          
+            self.app.logger.info('Starting background task email services...')
             daemon = Thread(target=self.background_task, daemon=True, name='Background')
             daemon.start()
-            # sleep(60)
         except Exception as error:
-            self.app.logger.info(error)
+            self.app.logger.error(error)

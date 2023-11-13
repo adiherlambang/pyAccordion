@@ -1,6 +1,7 @@
 from datetime import datetime
+from flask import current_app as app
 class dashboard:
-    data={
+    data = {
         "totalContract":'',
         "activeContract":'',
         "overdueContract":'',
@@ -11,7 +12,10 @@ class dashboard:
         "1yearfromNow":''
     }
     
-    def getActiveContract(reqData):
+    def __init__(self, parentApp):
+      self.app = parentApp
+    
+    def getActiveContract(self,reqData):
         counterActiveContract = 0
         
         for contract in reqData['data']['contracts']:
@@ -20,7 +24,7 @@ class dashboard:
                 
         return counterActiveContract
     
-    def getOverdueContract(reqData):
+    def getOverdueContract(self,reqData):
         counterOverdueContract = 0
         
         for contract in reqData['data']['contracts']:
@@ -29,7 +33,7 @@ class dashboard:
         
         return counterOverdueContract
     
-    def getSignedContract(reqData):
+    def getSignedContract(self,reqData):
         counterSignedContract = 0
         
         for contract in reqData['data']['contracts']:
@@ -38,13 +42,13 @@ class dashboard:
                 
         return counterSignedContract
     
-    def getTop5Pricelist(reqData):
+    def getTop5Pricelist(self,reqData):
         sorted_contracts = sorted(reqData.get('data', {}).get('contracts',[]), key=lambda x: x.get('listPrice', 0), reverse=True)
         top_5_contracts = sorted_contracts[:5]
         return top_5_contracts
     
-    def filter_contracts_ended_six_months_before(reqData):
-        filtered_contracts=[]
+    def filter_contracts_ended_six_months_before(self,reqData):   
+        filtered_contracts=[]   
         date_format = "%d-%b-%YT%H:%M:%S.%f%z"
         # print(six_months_ago)
         str_date = datetime.now().strftime("%d-%b-%YT%H:%M:%S.%f+0000")
@@ -65,8 +69,8 @@ class dashboard:
         sorted_contracts = sorted(filtered_contracts, key=lambda x: x['dayLeft'],reverse=False)
         return sorted_contracts
     
-    def filter_contracts_ended_six_months_to_one_year(reqData):
-        filtered_contracts=[]
+    def filter_contracts_ended_six_months_to_one_year(self,reqData):      
+        filtered_contracts=[]  
         date_format = "%d-%b-%YT%H:%M:%S.%f%z"
         # print(six_months_ago)
         str_date = datetime.now().strftime("%d-%b-%YT%H:%M:%S.%f+0000")
@@ -87,8 +91,8 @@ class dashboard:
         sorted_contracts = sorted(filtered_contracts, key=lambda x: x['dayLeft'],reverse=False)
         return sorted_contracts
     
-    def filter_contracts_ended_more_than_one_year(reqData):
-        filtered_contracts=[]
+    def filter_contracts_ended_more_than_one_year(self,reqData):   
+        filtered_contracts=[]    
         date_format = "%d-%b-%YT%H:%M:%S.%f%z"
         # print(six_months_ago)
         str_date = datetime.now().strftime("%d-%b-%YT%H:%M:%S.%f+0000")
@@ -114,13 +118,13 @@ class dashboard:
     
     def main(self,reqData):
         self.data['totalContract']=reqData['data']['totalRecords']
-        self.data['activeContract']=dashboard.getActiveContract(reqData)
-        self.data['overdueContract']=dashboard.getOverdueContract(reqData)
-        self.data['signedContract']=dashboard.getSignedContract(reqData)
-        self.data['top5PriceList']=dashboard.getTop5Pricelist(reqData)
-        self.data['6MonthfromNow']=dashboard.filter_contracts_ended_six_months_before(reqData)
-        self.data['6MonthLessThan1YearfromNow']=dashboard.filter_contracts_ended_six_months_to_one_year(reqData)
-        self.data['1yearfromNow']=dashboard.filter_contracts_ended_more_than_one_year(reqData)
+        self.data['activeContract']=self.getActiveContract(reqData)
+        self.data['overdueContract']=self.getOverdueContract(reqData)
+        self.data['signedContract']=self.getSignedContract(reqData)
+        self.data['top5PriceList']=self.getTop5Pricelist(reqData)
+        self.data['6MonthfromNow']=self.filter_contracts_ended_six_months_before(reqData)
+        self.data['6MonthLessThan1YearfromNow']=self.filter_contracts_ended_six_months_to_one_year(reqData)
+        self.data['1yearfromNow']=self.filter_contracts_ended_more_than_one_year(reqData)
         return self.data
         
         

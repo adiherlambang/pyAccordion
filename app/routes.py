@@ -7,7 +7,7 @@ import time
 
 bp = Blueprint('main', __name__)
 ccwrAPI = cisco_api(app)
-dataDashboard = dashboard()
+dataDashboard = dashboard(app)
 noData = []
 
 @bp.route('/', methods=['GET']) ## Home Page
@@ -37,7 +37,7 @@ def sendMail():
     if request.method == 'POST':
         requestData = request.get_json()
         app.logger.info("Send an email initiate")
-        mailService = gmailServices.main(app,to=requestData['emailRecipient'],subject=requestData['emailSubject'],message_text=requestData['mailMessage'])
+        mailService = gmailServices.testMail(app=app,to=requestData['emailRecipient'],subject=requestData['emailSubject'],message_text=requestData['mailMessage'],cc=requestData['emailCC'])
         return mailService
 
 
