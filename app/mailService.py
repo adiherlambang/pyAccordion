@@ -47,10 +47,10 @@ class gmailServices:
         message['from'] = sender
         message['subject'] = subject
         if cc:
-            message['cc'] = cc  # Add CC addresses
+            message['cc'] = ', '.join(cc)  # Add CC addresses
 
         if bcc:
-            message['bcc'] = bcc  # Add BCC addresses
+            message['bcc'] = ', '.join(bcc)  # Add BCC addresses
         
         html_part = MIMEText(f'{message_text}', 'html')
         message.attach(html_part)
