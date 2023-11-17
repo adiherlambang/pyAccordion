@@ -51,7 +51,7 @@ class SchedulerService:
         return jsonify(NO_DATA)
 
     def background_task(self):
-        trigger = CronTrigger(hour=9, minute=47)
+        trigger = CronTrigger(hour=8, minute=0)
         self.scheduler.add_job(
             self.send_email_task,
             trigger=trigger,
