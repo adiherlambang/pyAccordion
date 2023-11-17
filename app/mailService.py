@@ -40,41 +40,42 @@ class gmailServices:
         return {'raw': raw_message}
 
     @staticmethod
-    def create_message_with_attachment(sender, to, subject, message_text, file_path,cc=None, bcc=None):
+    def create_message_with_attachment(sender, to, subject, message_text, file_path, cc=None, bcc=None):
         """Create a message for an email."""
         message = MIMEMultipart()
-        message['to'] = to
+        message['to'] = ', '.join(to)
         message['from'] = sender
         message['subject'] = subject
+
         if cc:
             message['cc'] = ', '.join(cc)  # Add CC addresses
 
         if bcc:
             message['bcc'] = ', '.join(bcc)  # Add BCC addresses
-        
-        html_part = MIMEText(f'{message_text}', 'html')
+
+        html_part = MIMEText(message_text, 'html')
         message.attach(html_part)
 
         content_type, encoding = mimetypes.guess_type(file_path)
         if content_type is None or encoding is not None:
             content_type = 'application/octet-stream'
+        
         main_type, sub_type = content_type.split('/', 1)
-        if main_type == 'text':
-            with open(file_path, 'rb') as f:
-                message.attach(MIMEText(f.read().decode('utf-8'), _subtype=sub_type))
-        elif main_type == 'image':
-            with open(file_path, 'rb') as f:
-                message.attach(MIMEImage(f.read(), _subtype=sub_type))
-        elif main_type == 'audio':
-            with open(file_path, 'rb') as f:
-                message.attach(MIMEAudio(f.read(), _subtype=sub_type))
-        else:
-            with open(file_path, 'rb') as f:
+
+        with open(file_path, 'rb') as f:
+            if main_type == 'text':
+                attachment = MIMEText(f.read().decode('utf-8'), _subtype=sub_type)
+            elif main_type == 'image':
+                attachment = MIMEImage(f.read(), _subtype=sub_type)
+            elif main_type == 'audio':
+                attachment = MIMEAudio(f.read(), _subtype=sub_type)
+            else:
                 attachment = MIMEBase(main_type, sub_type)
                 attachment.set_payload(f.read())
                 encoders.encode_base64(attachment)
                 attachment.add_header('Content-Disposition', f'attachment; filename={os.path.basename(file_path)}')
-                message.attach(attachment)
+
+        message.attach(attachment)
 
         raw_message = urlsafe_b64encode(message.as_bytes()).decode('utf-8')
         return {'raw': raw_message}
@@ -183,7 +184,7 @@ class gmailServices:
             to = ['meilinie@mastersystem.co.id','cinthiya@mastersystem.co.id']
             subject = subject
             body = message_text
-            cc_recipient = 'septian.adi@mastersystem.co.id'
+            cc_recipient = ['septian.adi@mastersystem.co.id']
             bcc_recipient = bcc
 
             # Specify the file path of the attachment
