@@ -13,6 +13,7 @@ from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 import mimetypes
 from email import encoders
+import time
 # from flask import current_app as app
 
 # If modifying these scopes, delete the file token.json.
@@ -81,16 +82,22 @@ class gmailServices:
     @staticmethod
     def send_email(app, service, sender, to, subject, body, attachment_path=None,cc_recipient=None,bcc_recipient=None):
         if attachment_path:
-            app.logger.info(f"send email with attachment")
-            message = gmailServices.create_message_with_attachment(sender, to, subject, body, attachment_path,cc_recipient,bcc_recipient)
+            max_retries = 3
+            for _ in range(max_retries):
+                app.logger.info(f"send email with attachment #{max_retries}")
+                message = gmailServices.create_message_with_attachment(sender, to, subject, body, attachment_path,cc_recipient,bcc_recipient)
 
-            try:
-                message = service.users().messages().send(userId="me", body=message).execute()
-                app.logger.info(f"Message Id: {message['id']}")
-                return message
-            except Exception as error:
-                app.logger.error(f"An error occurred: {error}")
-        
+                try:
+                    message = service.users().messages().send(userId="me", body=message).execute()
+                    if 'error' in message:
+                        app.logger.error(f"Error sending email to {to}, cc {cc_recipient}: {message['error']}")
+                    else:
+                        app.logger.info(f"Message Id: {message['id']}")
+                        return message
+                except Exception as error:
+                    app.logger.error(f"An error occurred: {error}")
+                    time.sleep(5)
+            app.logger.info("Failed to send email after 3 retries.")
         else:
             app.logger.info(f"send email without attachment")
             # app.logger.info(f"Message : {sender}, {to}, {subject}, {body},{cc_recipient},{bcc_recipient}")
@@ -173,10 +180,10 @@ class gmailServices:
 
             # Set up email details
             sender = 'dummyapiconnected@gmail.com'
-            to = 'septian.adi@mastersystem.co.id'
+            to = ['meilinie@mastersystem.co.id','cinthiya@mastersystem.co.id']
             subject = subject
             body = message_text
-            cc_recipient = "adiherl91@gmail.com"
+            cc_recipient = 'septian.adi@mastersystem.co.id'
             bcc_recipient = bcc
 
             # Specify the file path of the attachment
