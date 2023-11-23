@@ -67,7 +67,7 @@ class SchedulerService:
         # Add content to the PDF
         content = []
         styles = getSampleStyleSheet()
-        header_content1 = f"pyAccordion Apps"
+        header_content1 = f"MSAnalytics Apps"
         paragraph1 = Paragraph(header_content1,styles['Heading1'])
         element.append(paragraph1)
         header_content2 = f"You have {len(data_dict['6MonthfromNow'])} contracts expiring in less than 6 months"
@@ -138,7 +138,7 @@ class SchedulerService:
             <p>Please found details in the attachment</p>
             <br>
             <p>Best Regards,</p>
-            <p>pyAccordion Application</p>
+            <p>MSAnalytics Application</p>
             <h4>### Please do not, reply this message ###</h4>
         </body>
         </html>
@@ -150,7 +150,7 @@ class SchedulerService:
                 app=self.app,
                 to="septian.adi@mastersystem.co.id",
                 # cc="kadek.sena@mastersystem.co.id",
-                subject="AUTOMATIC EMAIL - pyAccordion",
+                subject="AUTOMATIC EMAIL - MSAnalytics",
                 attachment_data=pdf_buffer,
                 attachment_filename=output_file_path,
                 message_text=email_body

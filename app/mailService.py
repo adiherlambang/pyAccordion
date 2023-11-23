@@ -138,7 +138,7 @@ class gmailServices:
             # Call the Gmail API
             service = build('gmail', 'v1', credentials=creds)
             # Compose the email
-            sender = 'dummyapiconnected@gmail.com'
+            sender = 'MSAnalytics'
             recipient = to
             cc_recipient = cc
             bcc_recipient = bcc
@@ -180,7 +180,7 @@ class gmailServices:
             service = build('gmail', 'v1', credentials=creds)
 
             # Set up email details
-            sender = 'dummyapiconnected@gmail.com'
+            sender = 'MSAnalytics'
             to = ['meilinie@mastersystem.co.id','cinthiya@mastersystem.co.id']
             subject = subject
             body = message_text

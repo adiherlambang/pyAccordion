@@ -56,7 +56,36 @@ tr.selected {
     cursor: pointer; /* Change the cursor to a pointer on hover */
 }
 
+#bootstrap-data-table-between1y6m tbody tr:hover {
+    background-color: #5ba1ec; /* Change the background color on hover */
+    cursor: pointer; /* Change the cursor to a pointer on hover */
+}
+
+#bootstrap-data-table-more1y tbody tr:hover {
+    background-color: #5ba1ec; /* Change the background color on hover */
+    cursor: pointer; /* Change the cursor to a pointer on hover */
+}
 
 .nav.nav-tabs{
     margin-bottom: 20px;
+}
+
+.dataTables_filter{
+    margin-top: 5px;
+}
+
+.dataTables_length{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.dt-buttons{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.dt-buttons a{
+    border: 1px solid #6f6d6d;
+    background-color: #6f6d6d;
 }

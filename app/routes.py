@@ -13,7 +13,7 @@ noData = []
 @bp.route('/', methods=['GET']) ## Home Page
 def app_home():
     if request.method == 'GET':
-        data = "Welcome to PyAccordion"
+        data = "Welcome to MSAnalytics"
         app.logger.info("Render Home Page")
         return render_template("index.html",data = data)
 
