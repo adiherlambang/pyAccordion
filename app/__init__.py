@@ -4,6 +4,7 @@ from .logging import configure_logger
 from datetime import datetime
 from dotenv import load_dotenv
 from app.schedulerService import SchedulerService
+import os,sys, signal
 
 current_date = datetime.now().strftime('%Y-%m-%d')
 app = Flask(__name__,static_folder='static', template_folder='templates')
@@ -18,6 +19,18 @@ service = SchedulerService(app)
 service.main()
 
 app.logger.info(f"{app} pyAccordion is running , DateTime: {datetime.now()}")
+
+# Signal handler for SIGHUP
+def handle_sighup(signum, frame):
+    app.logger.info("Received SIGHUP signal. Restarting the application...")
+    restart_program()
+
+ # Function to restart the application
+def restart_program():
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
+    
+signal.signal(signal.SIGHUP, handle_sighup)
 
 @app.route('/<path:filename>')
 def serve_static(filename):
