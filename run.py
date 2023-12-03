@@ -1,4 +1,4 @@
-from app import app as MSanalytic
+from app import app
 
 if __name__ == '__main__':
-    MSanalytic.run(debug=True, port=8080)
+    app.run(debug=True, port=8080)
