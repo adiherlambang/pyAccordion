@@ -143,19 +143,30 @@ class SchedulerService:
         </body>
         </html>
         """
-
-        if self.counter < 1:
-            self.app.logger.info(f"Task execution email services counter: #{self.counter}")
-            gmailServices.send_email_with_attachment(
-                app=self.app,
-                to="septian.adi@mastersystem.co.id",
-                # cc="kadek.sena@mastersystem.co.id",
-                subject="AUTOMATIC EMAIL - MSAnalytics",
-                attachment_data=pdf_buffer,
-                attachment_filename=output_file_path,
-                message_text=email_body
-            )
-            self.counter += 1
+        max_retries = 3
+        retry_count = 0
+        while retry_count < max_retries:
+            try:
+                if self.counter < 1:
+                    self.app.logger.info(f"Task execution email services counter: #{self.counter}")
+                    gmailServices.send_email_with_attachment(
+                        app=self.app,
+                        to=['meilinie@mastersystem.co.id','cinthiya@mastersystem.co.id'],
+                        cc=['septian.adi@mastersystem.co.id'],
+                        subject="AUTOMATIC EMAIL - MSAnalytics",
+                        attachment_data=pdf_buffer,
+                        attachment_filename=output_file_path,
+                        message_text=email_body
+                    )
+                self.counter += 1
+                break
+            except Exception as e:
+                retry_count += 1
+                if retry_count < max_retries:
+                    self.app.logging.warning(f"Retrying ({retry_count}/{max_retries}) after a short delay...")
+                    sleep(5)  # Add a short delay before retrying
+        if retry_count == max_retries:
+            self.app.logging.error(f"Failed to send email after {max_retries} retries")
 
     def main(self):
         try:

@@ -4,7 +4,7 @@ from .logging import configure_logger
 from datetime import datetime
 from dotenv import load_dotenv
 from app.schedulerService import SchedulerService
-import os,sys, signal
+import os,sys,signal,platform
 
 current_date = datetime.now().strftime('%Y-%m-%d')
 app = Flask(__name__,static_folder='static', template_folder='templates')
@@ -30,7 +30,10 @@ def restart_program():
     python = sys.executable
     os.execl(python, python, *sys.argv)
     
-signal.signal(signal.SIGHUP, handle_sighup)
+if platform.system() != 'Windows':
+    signal.signal(signal.SIGHUP, handle_sighup)
+else:
+    app.logger.info("SIGHUP signal not supported on Windows. Signal handling not set up.")
 
 @app.route('/<path:filename>')
 def serve_static(filename):

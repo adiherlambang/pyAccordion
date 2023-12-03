@@ -85,7 +85,7 @@ class gmailServices:
         if attachment_path:
             max_retries = 3
             for _ in range(max_retries):
-                app.logger.info(f"send email with attachment #{max_retries}")
+                app.logger.info(f"send email with attachment #{_}")
                 message = gmailServices.create_message_with_attachment(sender, to, subject, body, attachment_path,cc_recipient,bcc_recipient)
 
                 try:
@@ -181,10 +181,10 @@ class gmailServices:
 
             # Set up email details
             sender = 'MSAnalytics'
-            to = ['meilinie@mastersystem.co.id','cinthiya@mastersystem.co.id']
+            to = to
             subject = subject
             body = message_text
-            cc_recipient = ['septian.adi@mastersystem.co.id']
+            cc_recipient = cc
             bcc_recipient = bcc
 
             # Specify the file path of the attachment
